@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Train Trax</title>
+    <title>Rock Paper Scissors Multiplayer</title>
     <!-- Required meta tags -->
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
@@ -12,17 +12,39 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
         crossorigin="anonymous">
     <link rel="stylesheet" href="./assets/css/style.css">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase.js"></script>
 </head>
 
 <body>
+    <div class="container">
 
+        <!-- * Pick a Player -->
+        <div class="row">
+            <button id="play">Play</button>
+        </div>
+
+        <!-- *Alerts to players -->
+        <div class="row">
+            <div id="alert"></div>
+        </div>
+
+        <!-- * RPS buttons -->
+        <div class="row">
+            <div id="p1" class="col-md-6"></div>
+            <div id="p2" class="col-md-6"></div>
+        </div>
+
+        <!-- *Stats -->
+        <div class="row">
+            <div id="stats"></div>
+            <div>There are <span id="connected-viewers"></span> people watching!</div>
+
+        </div>
+
+    </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60="
-        crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-        crossorigin="anonymous"></script>
     <script src="./assets/javascript/main.js"></script>
 </body>
 
