@@ -24,29 +24,31 @@ var p1Score = 0;
 var p2Score = 0;
 var player1;
 var player2;
+var left;
+
+var img = "./assets/images/";
 
 $("#name").focus();
 
 // * Pull prior stats
-db.ref("/stats").on("value", function (snap) {
+db.ref("/stats").on("value", function (snapshot) {
 
-    p1Score = snap.val().p1Score;
-    p2Score = snap.val().p2Score;
-
-});
-
-db.ref("/users").on("value", function (snap) {
-    console.log('TCL: snap', snap.val());
-
-    snap.val().score = p1Score;
-    snap.val().score = p2Score;
-    snap.val().name = player1;
-    snap.val().name = player2;
+    p1Score = snapshot.val().p1Score;
+    p2Score = snapshot.val().p2Score;
 
 });
 
+db.ref("/users").on("value", function (snapshot) {
 
-// * Update name for player
+    snapshot.val().score = p1Score;
+    snapshot.val().score = p2Score;
+    snapshot.val().name = player1;
+    snapshot.val().name = player2;
+
+});
+
+
+// * Update name for player2
 db.ref("/users").orderByChild("dateAdded").limitToFirst(2).on("child_added", function (snapshot) {
 
     if (p1 !== p2) {
@@ -60,31 +62,40 @@ db.ref("/users").orderByChild("dateAdded").limitToFirst(2).on("child_added", fun
     }
 });
 
-// * Update name for player
+// * Update name for player1
 db.ref("/users").orderByChild("dateAdded").limitToFirst(1).on("child_added", function (snapshot) {
 
     player1 = snapshot.val().name;
     $("#p1").text(player1);
     p1 = snapshot.key;
+    // $("#header").hide();
     $("#p2").text("Awaiting opponent");
     $("#name").val("");
 });
 
 
 
-var rps = ["Rock", "Paper", "Scissors"];
+var rps = ["rock", "paper", "scissors"];
 
+
+// * Disconnect settings
 var myConnectionsRef = db.ref("/connected");
 var lastOnlineRef = db.ref("/lastOnline");
 var connectedRef = db.ref(".info/connected");
 
-connectedRef.on('value', function (snap) {
-    if (snap.val() === true) {
+connectedRef.on('value', function (snapshot) {
+    if (snapshot.val() === true) {
         // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
         var con = myConnectionsRef.push();
 
         // When I disconnect, remove this device
+        left = con.onDisconnect();
+
+        // console.log('TCL: left', left);
+        // db.ref("/users/" + left).remove();
         con.onDisconnect().remove();
+
+        // todo get id from disconnect and remove from user also?
 
         // Add this device to my connections list
         // this value could contain info about the device or a timestamp too
@@ -98,9 +109,11 @@ connectedRef.on('value', function (snap) {
 
 
 // *Update stats section with score
-// db.ref("/stats").update({
+// db.ref("/stats").on("value", function (snapshot) {
 
 // });
+
+
 
 // * Push users to /users when name input
 $("#input").on("click", function (event) {
@@ -141,3 +154,22 @@ function displayRPS(location, user) {
 }
 
 // * On specific click send it to firebase and check for value, match based off of that
+
+$("#p1").on("click", ".rps", function () {
+    var shoot = $(this).val();
+
+    db.ref("users/" + p1).update({
+        "shoot": shoot
+    });
+    $("#p1-choice").empty().append("<img src='" + img + shoot + ".png'>");
+});
+
+
+$("#p2").on("click", ".rps", function () {
+    var shoot = $(this).val();
+
+    db.ref("users/" + p2).update({
+        "shoot": shoot
+    });
+    $("#p2-choice").empty().append("<img src='" + img + shoot + ".png' >");
+});
