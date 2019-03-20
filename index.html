@@ -20,13 +20,17 @@
     <div class="container">
 
         <!-- * Pick a Player -->
-        <div class="row">
-            <button id="play">Play</button>
-        </div>
+        <form id="header" class="form-group">
+            <label for="name">Choose a name</label>
+            <input type="text" class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="Game Name">
+            <button id="input" class="btn btn-primary" type="submit">Submit</button>
+        </form>
+
 
         <!-- *Alerts to players -->
         <div class="row">
-            <div id="alert"></div>
+            <div class="col-md-6" id="alert1"></div>
+            <div class="col-md-6" id="alert2"></div>
         </div>
 
         <!-- * RPS buttons -->
@@ -35,10 +39,16 @@
             <div id="p2" class="col-md-6"></div>
         </div>
 
+        <!-- * Choice buttons -->
+        <div class="row">
+            <div id="p1-choice" class="col-md-6"></div>
+            <div id="p2-choice" class="col-md-6"></div>
+        </div>
+
         <!-- *Stats -->
         <div class="row">
             <div id="stats"></div>
-            <div>There are <span id="connected-viewers"></span> people watching!</div>
+            <!-- <div>There are <span id="connected-viewers"></span> people watching!</div> -->
 
         </div>
 

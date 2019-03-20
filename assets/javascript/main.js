@@ -1,126 +1,87 @@
- // Initialize Firebase
- var config = {
-     apiKey: "AIzaSyC-kN9ZIlXZDPqNMO0hRwRRuq9LHGzykmk",
-     authDomain: "multiplayer-rps-6b6a2.firebaseapp.com",
-     databaseURL: "https://multiplayer-rps-6b6a2.firebaseio.com",
-     projectId: "multiplayer-rps-6b6a2",
-     storageBucket: "multiplayer-rps-6b6a2.appspot.com",
-     messagingSenderId: "801067756626"
- };
- firebase.initializeApp(config);
+// Initialize Firebase
+var config = {
+    apiKey: "AIzaSyDE7r3YnvYF7KmiVh08CdNjtCZZEzcX2_M",
+    authDomain: "multi-rps-20594.firebaseapp.com",
+    databaseURL: "https://multi-rps-20594.firebaseio.com",
+    projectId: "multi-rps-20594",
+    storageBucket: "",
+    messagingSenderId: "573605829935"
+};
+firebase.initializeApp(config);
 
- var database = firebase.database();
- var dataref = database.ref();
+var db = firebase.database();
+var dbref = db.ref();
 
- var rps = ["rock", "paper", "scissors"];
+var p1 = false;
+var p2 = false;
+var p1Score = 0;
+var p2Score = 0;
+var player1;
+var player2;
 
- var p1Ready = false;
- var p1Guess = "";
- var p2Ready = false;
- var p2Guess = "";
+$("#name").focus();
 
- var players = {
-     p1Ready: p1Ready,
-     p1Guess: p1Guess,
-     p2Ready: p2Ready,
-     p2Guess: p2Guess
- };
+// * Pull prior stats
+// db.ref("/stats").on("value", function (snap) {
 
- dataref.set(players);
+//     p1Score = snap.val().p1.p1Score;
+//     p2Score = snap.val().p2.p2Score;
 
- database.ref().on("value", function (snapshot) {
-         p1Ready = snapshot.val().p1Ready;
-         p2Ready = snapshot.val().p2Ready;
-         p1Guess = snapshot.val().p1Guess;
-         p2Guess = snapshot.val().p2Guess;
+// });
 
-         if (snapshot.child("p1").ready && snapshot.child("p2").exists()) {
+db.ref("/users").on("value", function (snap) {
+    console.log('TCL: snap', snap.val());
 
-         }
+    snap.val().score = p1Score;
+    snap.val().score = p2Score;
+    snap.val().name = player1;
+    snap.val().name = player2;
 
-         // If Firebase has the players set up, hide the ability to join
-         if (snapshot.child("p1").ready === true && snapshot.child("p2").ready === true) {
-             console.log("TCL: snapshot.child('p2').ready", snapshot.child("p2").ready);
-             console.log("TCL: snapshot.child('p1').ready", snapshot.child("p1").ready);
+});
 
-             $("#play").hide();
-         }
 
-     },
+// * Update name for player
+db.ref("/users").orderByChild("dateAdded").limitToFirst(2).on("child_added", function (snapshot) {
 
-     function (errorObject) {
-         console.log("The read failed: " + errorObject.code);
-     });
+    if (p1 !== p2) {
+        player2 = snapshot.val().name;
+        $("#p2").show().text(player2);
+        p2 = snapshot.key;
+    }
+});
 
- // * Users online
- var connectionsRef = database.ref("/connections");
- var connectedRef = database.ref(".info/connected");
- connectedRef.on("value", function (snap) {
+// * Update name for player
+db.ref("/users").orderByChild("dateAdded").limitToFirst(1).on("child_added", function (snapshot) {
 
-     // If they are connected..
-     if (snap.val()) {
-
-         // Add user to the connections list.
-         var con = connectionsRef.push(true);
-         // Remove user from the connection list when they disconnect.
-         con.onDisconnect().remove();
-     }
- });
- connectionsRef.on("value", function (snap) {
-
-     // Display the viewer count in the html.
-     // The number of online users is the number of children in the connections list.
-     $("#connected-viewers").text(snap.numChildren());
- });
-
- $("#play").on("click", function () {
-
-     if (p1Ready === false) {
-         $("#alert").text("You are Player 1");
-         dataref.set({
-             p1Ready: true
-         });
-         displayRPS($("#p1"));
-
-     } else if (p2ready === false) {
-         $("#alert").text("You are Player 2").delay(3000).fadeOut();
-         dataref.set({
-             p2Ready: true
-         });
-         displayRPS($("#p2"));
-
-     } else {
-         $("#play").hide();
-         $("#alert").text("You are spectating");
-
-     }
-
- });
-
- function displayRPS(location) {
-
-     for (var i = 0; i < rps.length; i++) {
-         var value = rps[i];
-         var newButton = $("<button>").text(value).val(value).addClass("rps");
-         location.append(newButton);
-
-     }
- }
+    player1 = snapshot.val().name;
+    $("#p1").text(player1);
+    p1 = snapshot.key;
+    $("#p2").text("Awaiting opponent");
+});
 
 
 
- // *When rps button is clicked, retrieve value and wait for opponent
- $(document).on("click", ".rps", function () {
-     var choice = $(this).val();
-     console.log("TCL: choice", choice);
-     $("#rps").text("Wait for opponent");
+var rps = ["Rock", "Paper", "Scissors"];
 
- });
+var usersRef = dbref.set("/users");
 
+// *Update stats section with score
+// db.ref("/stats").update({
 
+// });
 
- // *Pull from firebase If 2 players push play then remove button
+// * Push users to /users when name input
+$("#input").on("click", function (event) {
 
+    event.preventDefault();
 
+    var name = $("#name").val().trim();
 
- // * Once players are present
+    db.ref("/users").push({
+        "name": name
+
+    });
+
+    // if ()
+
+});
