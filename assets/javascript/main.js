@@ -24,7 +24,7 @@ var p1Score = 0;
 var p2Score = 0;
 var player1;
 var player2;
-var left;
+var userId;
 
 var img = "./assets/images/";
 
@@ -87,12 +87,13 @@ connectedRef.on('value', function (snapshot) {
     if (snapshot.val() === true) {
         // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
         var con = myConnectionsRef.push();
+        userId = con.path.pieces_[1];
 
-        // When I disconnect, remove this device
-        left = con.onDisconnect();
+        console.log('TCL: /users/ + userId', "/users/" + userId);
 
-        // console.log('TCL: left', left);
-        // db.ref("/users/" + left).remove();
+        // * This isn't working, sadly
+        db.ref("/users/" + userId).onDisconnect().remove();
+
         con.onDisconnect().remove();
 
         // todo get id from disconnect and remove from user also?
@@ -123,7 +124,8 @@ $("#input").on("click", function (event) {
     var name = $("#name").val().trim();
 
     db.ref("/users").push({
-        "name": name
+        "name": name,
+        "userID": userId
 
     });
 
