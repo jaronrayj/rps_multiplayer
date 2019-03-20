@@ -1,3 +1,9 @@
+//  todo Put in system to remove users from list
+// todo Set up process to click on certain button, have image display and upload to firebase
+// todo based off of input, set up logic to win lose
+// todo display stats
+// todo pull user info immediately and hide input bar if both present
+
 // Initialize Firebase
 var config = {
     apiKey: "AIzaSyDE7r3YnvYF7KmiVh08CdNjtCZZEzcX2_M",
@@ -22,12 +28,12 @@ var player2;
 $("#name").focus();
 
 // * Pull prior stats
-// db.ref("/stats").on("value", function (snap) {
+db.ref("/stats").on("value", function (snap) {
 
-//     p1Score = snap.val().p1.p1Score;
-//     p2Score = snap.val().p2.p2Score;
+    p1Score = snap.val().p1Score;
+    p2Score = snap.val().p2Score;
 
-// });
+});
 
 db.ref("/users").on("value", function (snap) {
     console.log('TCL: snap', snap.val());
@@ -47,6 +53,10 @@ db.ref("/users").orderByChild("dateAdded").limitToFirst(2).on("child_added", fun
         player2 = snapshot.val().name;
         $("#p2").show().text(player2);
         p2 = snapshot.key;
+
+        $("#header").hide();
+        $("#name").val("");
+
     }
 });
 
@@ -57,13 +67,35 @@ db.ref("/users").orderByChild("dateAdded").limitToFirst(1).on("child_added", fun
     $("#p1").text(player1);
     p1 = snapshot.key;
     $("#p2").text("Awaiting opponent");
+    $("#name").val("");
 });
 
 
 
 var rps = ["Rock", "Paper", "Scissors"];
 
-var usersRef = dbref.set("/users");
+var myConnectionsRef = db.ref("/connected");
+var lastOnlineRef = db.ref("/lastOnline");
+var connectedRef = db.ref(".info/connected");
+
+connectedRef.on('value', function (snap) {
+    if (snap.val() === true) {
+        // We're connected (or reconnected)! Do anything here that should happen only if online (or on reconnect)
+        var con = myConnectionsRef.push();
+
+        // When I disconnect, remove this device
+        con.onDisconnect().remove();
+
+        // Add this device to my connections list
+        // this value could contain info about the device or a timestamp too
+        con.set(true);
+
+        // When I disconnect, update the last time I was seen online
+        lastOnlineRef.onDisconnect().set(firebase.database.ServerValue.TIMESTAMP);
+    }
+});
+
+
 
 // *Update stats section with score
 // db.ref("/stats").update({
@@ -82,6 +114,30 @@ $("#input").on("click", function (event) {
 
     });
 
+    // * Display RPS once input has been setup
+    if (p2 === false) {
+        displayRPS($("#p1"), "p1");
+    } else {
+        displayRPS($("#p2"), "p2");
+    }
+
+
     // if ()
 
 });
+
+
+// *Display RPS buttons
+function displayRPS(location, user) {
+
+    var newDiv = $("<div>");
+    for (var i = 0; i < rps.length; i++) {
+        var value = rps[i];
+        var newButton = $("<button>").text(value).val(value).addClass("rps btn btn-warning").addClass(user);
+        newDiv.append(newButton);
+        location.append(newDiv);
+
+    }
+}
+
+// * On specific click send it to firebase and check for value, match based off of that

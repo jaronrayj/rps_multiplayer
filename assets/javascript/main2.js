@@ -1,4 +1,6 @@
- // Initialize Firebase
+// Round one of JS
+
+// Initialize Firebase
   var config = {
       apiKey: "AIzaSyC-kN9ZIlXZDPqNMO0hRwRRuq9LHGzykmk",
       authDomain: "multiplayer-rps-6b6a2.firebaseapp.com",
