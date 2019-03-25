@@ -27,9 +27,12 @@ var user;
 var header = $("#header");
 var alert = $("#alert").addClass("card-title");
 var content = $("#content").addClass("card-body");
+var p1name;
+var p2name;
 var name;
 var p1Shoot;
 var p2Shoot;
+var winner;
 
 var tie = 0;
 var p1win = 0;
@@ -54,13 +57,13 @@ $("#name").focus();
 userRef.on("value", function (snapshot) {
 
     p1 = snapshot.val().player1.p1;
-    console.log("TCL: p1", p1);
     p2 = snapshot.val().player2.p2;
-    console.log("TCL: p2", p2);
     p1Shoot = snapshot.val().player1.shoot;
-    console.log("TCL: p1Shoot", p1Shoot);
     p2Shoot = snapshot.val().player2.shoot;
-    console.log("TCL: p2Shoot", p2Shoot);
+    p1name = snapshot.val().player1.p1name;
+	console.log("TCL: p1name", p1name);
+    p2name = snapshot.val().player2.p2name;
+	console.log("TCL: p2name", p2name);
 
 });
 
@@ -69,15 +72,17 @@ function gameTime() {
     if (p1Shoot !== false && p2Shoot !== false) {
         if (p1Shoot === p2Shoot) {
             tie++;
+            winner = "Draw this round!";
         } else if (p1Shoot === "paper" && p2Shoot === "rock" || p1Shoot === "rock" && p2Shoot === "scissors" || p1Shoot === "scissors" && p2Shoot === "paper") {
             p1win++;
             p2loss++;
             total++;
-
+            winner = p1name + " won this round!";
         } else if (p2Shoot === "paper" && p1Shoot === "rock" || p2Shoot === "rock" && p1Shoot === "scissors" || p2Shoot === "scissors" && p1Shoot === "paper") {
             p2win++;
             p1loss++;
             total++;
+            winner = p2name + " won this round!";
         }
         updateScore();
     }
@@ -91,11 +96,19 @@ function updateScore() {
         total: total,
         p2win: p2win,
         p2loss: p2loss,
+        winner: winner,
     });
     clearShoot();
 }
 
-db.ref("/users/stats").on("value", function () {
+db.ref("/users/stats").on("value", function (snapshot) {
+    tie = snapshot.val().tie;
+    p1win = snapshot.val().p1win;
+    p1loss = snapshot.val().p1loss;
+    total = snapshot.val().total;
+    p2win = snapshot.val().p2win;
+    p2loss = snapshot.val().p2loss;
+    winner = snapshot.val().winner;
     displayScore();
 });
 
@@ -114,14 +127,6 @@ function clearShoot() {
 
 
 // * Disconnect settings
-
-
-// todo on connection add the specific user. User1 or user2
-
-// userRef.user.on('value', function (snapshot){
-
-
-// });
 
 connectedRef.on('value', function (snapshot) {
     if (snapshot.val() === true) {
@@ -143,24 +148,29 @@ connectedRef.on('value', function (snapshot) {
 
 function displayScore() {
 
-    var newDiv = $("<div>").empty();
+    var newDiv = $("<div>");
     var textTies = $("<div>").text("Ties: " + tie);
     newDiv.append(textTies);
     $("#stats").empty().append(newDiv);
 
     // *P1 win/losses
-    var p1Div = $("<div>").empty();
+    var p1Div = $("<div>");
+    var p1user = $("<div>").text(p1name);
     var p1Yes = $("<div>").text("Wins: " + p1win);
     var p1No = $("<div>").text("Losses: " + p1loss);
-    p1Div.append(p1Yes).append(p1No);
+    p1Div.append(p1user).append(p1Yes).append(p1No);
     $("#p1stats").empty().append(p1Div);
 
     // *P2 win/losses
-    var p2Div = $("<div>").empty();
+    var p2Div = $("<div>");
+    var p2user = $("<div>").text(p2name);
     var p2Yes = $("<div>").text("Wins: " + p2win);
     var p2No = $("<div>").text("Losses: " + p2loss);
-    p2Div.append(p2Yes).append(p2No);
+    p2Div.append(p2user).append(p2Yes).append(p2No);
     $("#p2stats").empty().append(p2Div);
+
+    // *Winner display
+    content.text(winner);
 }
 
 
@@ -176,17 +186,17 @@ $("#input").on("click", function (event) {
 
     if (p1 === true && p2 === false) {
         user = "player2";
-        console.log("TCL: user", user);
         p2 = true;
-        
+        p2name = name;
+
         var player2 = {
             p2: p2,
-            name: name,
+            p2name: name,
             connectedID: connectedId,
             player: user,
             shoot: false,
         };
-        
+
         db.ref("/users/stats").set({
             tie: 0,
             p1win: 0,
@@ -194,33 +204,38 @@ $("#input").on("click", function (event) {
             total: 0,
             p2win: 0,
             p2loss: 0,
+            winner: "",
         });
-        
+
+        displayScore();
+
         // * Display RPS once input has been setup
         displayRPS($("#p2"), "p2");
-        
+
         // * Set new location for this user
         db.ref("/users/" + user).set(player2);
         db.ref("/users/" + user).onDisconnect().remove();
         db.ref("/users/" + user).onDisconnect(function () {
             db.ref("/users/stats").remove();
         });
-        alert.text("Rock, Paper, Scissors...SHOOT!");
+        alert.text("Rock, Paper, Scissors...SHOOT!").append(content);
         header.hide();
 
     } else if ((p1 === false && p2 === true) || (p1 === false && p2 === false)) {
         user = "player1";
-        console.log("TCL: user", user);
         p1 = true;
-        
+        p1name = name;
+
         var player1 = {
             p1: p1,
-            name: name,
+            p1name: name,
             connectedID: connectedId,
             player: user,
             shoot: false,
         };
-        
+
+        displayScore();
+
         // * Display RPS once input has been setup
         displayRPS($("#p1"), "p1");
 
@@ -231,6 +246,7 @@ $("#input").on("click", function (event) {
             total: 0,
             p2win: 0,
             p2loss: 0,
+            winner: "",
         });
 
         // * Set new location for this user
@@ -240,10 +256,10 @@ $("#input").on("click", function (event) {
             db.ref("/users/stats").remove();
         });
         header.hide();
-        alert.text("Rock, Paper, Scissors...SHOOT!");
+        alert.text("Rock, Paper, Scissors...SHOOT!").append(content);
 
     } else {
-        alert.text("Seats taken, you may spectate");
+        alert.text("Seats taken, you may spectate").append(content);
     }
 
 
@@ -295,7 +311,7 @@ $("#reset").on("click", function () {
     $("#p1-choice").empty();
     $("#p2").empty();
     $("#p2-choice").empty();
-    alert.text("Choose a name");
+    alert.text("Choose a name").append(content);
     content.text("");
     p1 = false;
     p2 = false;
@@ -304,4 +320,5 @@ $("#reset").on("click", function () {
     p1loss = 0;
     p2win = 0;
     p2loss = 0;
+    displayScore();
 });

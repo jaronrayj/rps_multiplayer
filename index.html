@@ -37,8 +37,8 @@
                 <div class="card">
                     <div id="alert" class="card-title">
                         Choose a name
-                        <div id="content" class="card-body"></div>
                     </div>
+                    <div id="content" class="card-body"></div>
                 </div>
             </div>
             <div id="p2-choice" class="col-md-4"></div>
@@ -52,23 +52,39 @@
         </div>
 
         <!-- *Stats -->
+        <div class="row card">
+            <div class="card-header text-center">
+                Player Stats
+            </div>
+        </div>
         <div class="row">
-            <div class="col-md-4">
-                <div id="p1stats"></div>
+            <div class="col-md-4 card">
+                <div class="">
+                    <div class="card-body">
+                        <div class="card-text" id="p1stats"></div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4">
-                <div id="stats"></div>
+            <div class="col-md-4 card">
+                <div class="">
+                    <div class="card-body">
+                        <div class="card-text" id="stats"></div>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-4">
-                <div id="p2stats"></div>
+            <div class="col-md-4 card">
+                <div class="">
+                    <div class="card-body">
+                        <div class="card-text" id="p2stats"></div>
+                    </div>
+                </div>
             </div>
-            <!-- <div>There are <span id="connected-viewers"></span> people watching!</div> -->
-
         </div>
 
-        <button id="reset">Reset</button>
+        <button id="reset" type="button" class="btn btn-danger">Reset</button>
 
     </div>
+
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
     <script src="./assets/javascript/main.js"></script>
