@@ -2,3 +2,15 @@ body {
     /* background-image: url("../images/split-background-6.jpg") */
     background-color: grey;
 }
+
+#p1, #p2, #p1stats, #p2stats, #stats, #alert1, #p1-choice, #p2-choice {
+    text-align: center;
+}
+
+#shootingRange{
+    background-color: 
+}
+
+#shootingRange {
+    height: 275px;
+}

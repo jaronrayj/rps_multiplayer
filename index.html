@@ -9,8 +9,8 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="./assets/css/reset.css">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
-        crossorigin="anonymous">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+        integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="./assets/css/style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/5.9.0/firebase.js"></script>
@@ -21,36 +21,52 @@
 
         <!-- * Pick a Player -->
         <form id="header" class="form-group">
-            <label for="name">Choose a name</label>
-            <input type="text" class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="Game Name">
+            <label for="name"></label>
+            <input type="text" class="form-control" name="name" id="name" aria-describedby="helpId"
+                placeholder="Game Name">
             <button id="input" class="btn btn-primary" type="submit">Submit</button>
         </form>
 
+        <!-- * Shoot images -->
+        <div id="shootingRange" class="row">
+            <div id="p1-choice" class="col-md-4"></div>
 
-        <!-- *Alerts to players -->
-        <div class="row">
-            <div class="col-md-6" id="alert1"></div>
-            <div class="col-md-6" id="alert2"></div>
+            <!-- *Alerts to players -->
+
+            <div class="col-md-4">
+                <div class="card">
+                    <div id="alert" class="card-title">
+                        Choose a name
+                        <div id="content" class="card-body"></div>
+                    </div>
+                </div>
+            </div>
+            <div id="p2-choice" class="col-md-4"></div>
         </div>
 
         <!-- * RPS buttons -->
         <div class="row">
-            <div id="p1" class="col-md-6"></div>
-            <div id="p2" class="col-md-6"></div>
-        </div>
-
-        <!-- * Choice buttons -->
-        <div class="row">
-            <div id="p1-choice" class="col-md-6"></div>
-            <div id="p2-choice" class="col-md-6"></div>
+            <div id="p1" class="col-md-4"></div>
+            <div class="col-md-4"></div>
+            <div id="p2" class="col-md-4"></div>
         </div>
 
         <!-- *Stats -->
         <div class="row">
-            <div id="stats"></div>
+            <div class="col-md-4">
+                <div id="p1stats"></div>
+            </div>
+            <div class="col-md-4">
+                <div id="stats"></div>
+            </div>
+            <div class="col-md-4">
+                <div id="p2stats"></div>
+            </div>
             <!-- <div>There are <span id="connected-viewers"></span> people watching!</div> -->
 
         </div>
+
+        <button id="reset">Reset</button>
 
     </div>
     <!-- Optional JavaScript -->
